@@ -1,4 +1,5 @@
 #include "config.h"
+#include <filesystem>
 #include "system_init.h"
 
 using namespace maix;
@@ -109,16 +110,37 @@ void new_app_init(uint8_t safe_update)
 
 void update_resolv_conf(void)
 {
-	FILE *fp = NULL;
-	// fp = fopen("/boot/resolv.conf", "w+");
-	fp = fopen("/boot/resolv.conf", "w");
-	// 阿里: 223.5.5.5
-	// 腾讯: 119.29.29.29
-	fprintf(fp, "nameserver 192.168.0.1\nnameserver 8.8.4.4\nnameserver 8.8.8.8\nnameserver 114.114.114.114\nnameserver 119.29.29.29\nnameserver 223.5.5.5");
-	fclose(fp);
-	system("rm -rf /etc/resolv.conf");
-	system("cp -vf /etc/resolv.conf /etc/resolv.conf.old");
-	system("cp -vf /boot/resolv.conf /etc/resolv.conf");
+  std::filesystem::path b_resolv;
+  std::filesystem::path e_resolv;
+  b_resolv.assign(std::move("/boot/resolv.conf"));
+  e_resolv.assign(std::move("/etc/resolv.conf"));
+
+  if (std::filesystem::exists(e_resolv) == false) {
+    if (std::filesystem::exists(b_resolv) == false) {
+      // write default resolver config
+      std::ofstream d_resolv(e_resolv.filename(), std::ios_base::out|std::ios_base::trunc);
+      if (!d_resolv) {
+        std::cerr << "Failed to open file: " << d_resolv.filename() << std::endl;
+      }
+      d_resolv << "nameserver" << " " << "8.8.8.8" << std::endl;
+      d_resolv << "nameserver" << " " << "1.1.1.1" << std::endl;
+      d_resolv << "nameserver" << " " << "114.114.114.114" << std::endl;
+    } else {
+      // copy or write default config?
+      if (std::filesystem::is_empty(b_resolv) == true) {
+        std::ofstream d_resolv(e_resolv.filename(), std::ios_base::out|std::ios_base::trunc);
+        if (!d_resolv) {
+          std::cerr << "Failed to open file: " << d_resolv.string << std::endl;
+        }
+        d_resolv << "nameserver" << " " << "8.8.8.8" << std::endl;
+        d_resolv << "nameserver" << " " << "1.1.1.1" << std::endl;
+        d_resolv << "nameserver" << " " << "114.114.114.114" << std::endl;
+      } else {
+        // copy file
+        std::filesystem::copy(b_resolv, e_resolv, std::filesystem::copy_options::overwrite_existing);
+      }
+    }
+  }
 }
 
 void init_upadte(void)

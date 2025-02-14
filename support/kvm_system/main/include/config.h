@@ -17,6 +17,11 @@
 #include <sys/poll.h>
 #include <fstream>
 #include <linux/input.h>
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <cassert>
+#include <utility>
 
 #include "qr.h"
 #include "system_ctrl.h"
