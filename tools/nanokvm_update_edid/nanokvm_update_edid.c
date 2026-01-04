@@ -590,7 +590,7 @@ void print_warning(product_version_t product_version) {
 
     if (product_version == PRODUCT_CUBE_A || product_version == PRODUCT_CUBE_B) {
         printf("\n==========================================================\n");
-        printf("⚠️  WARNING: Hardware version detected as Cube/Lite!\n");
+        printf(" WARNING: Hardware version detected as Cube/Lite!\n");
         printf("==========================================================\n");
         printf("After flashing, you MUST manually power cycle the device!\n");
         printf("Please ensure you can physically disconnect its power,\n");
@@ -601,7 +601,7 @@ void print_warning(product_version_t product_version) {
 
 void print_success(product_version_t product_version) {
     printf("\n=========================================================\n");
-    printf("✅  EDID update successful!\n");
+    printf(" EDID update successful!\n");
     if (product_version == PRODUCT_CUBE_A || product_version == PRODUCT_CUBE_B) {
         printf("Please manually power cycle the device to apply changes.\n");
     } 
